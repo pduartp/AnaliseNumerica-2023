@@ -24,7 +24,7 @@ function [x, iter] = gaussSeidel(A, b, x0, tol, maxIter)
     iter = 1; 
     
     // começa o loop do métod0 de Gauss-Seidel
-    while iter < maxiter
+    while iter < maxIter
         // armazena a estimativa anterior de solução
         x_old = x;
         
