@@ -119,7 +119,7 @@ b = [
 ];
 
 printf("\t________________________________________");
-disp("Eliminação de gauss ingênua.");
+disp("1. Eliminação de gauss ingênua.");
 
 // x = vetor de soluções
 x = gaussElimIngenua(A, b);
