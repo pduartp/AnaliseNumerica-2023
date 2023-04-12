@@ -8,18 +8,17 @@ O métod continua iterando até que a solução seja encontrada com a precisão 
 clc
 
 // Função para o métod0 de Gauss-Seidel
-function [x, iter] = gaussSeidel(A, b, tol, maxIter)
-    // A é a matriz dos coeficientes do sistema de equações lineares
-    // b é o vetor das constantes do sistema de equações lineares
-    // x0 é o vetor inicial de estimativas de solução
-    // tol é a tolerância para convergência
-    // maxiter é o número máximo de iterações
-    
+// A é a matriz dos coeficientes do sistema de equações lineares
+// b é o vetor das constantes do sistema de equações lineares
+// x0 é o vetor inicial de estimativas de solução
+// tol é a tolerância para convergência
+// maxiter é o número máximo de iterações
+function [x, iter] = gaussSeidel(A, b, x0, tol, maxIter)    
     // tamanho do sistema
     n = length(b); 
     
     // inicializa as estimativas de solução
-    x = x0
+    x = x0;
     
     // inicializa o número de iterações; 
     iter = 1; 
@@ -30,12 +29,12 @@ function [x, iter] = gaussSeidel(A, b, tol, maxIter)
         x_old = x;
         
         // loop sobre as equações do sistema
-        for i = 1:n                         
+        for i = 1 : n                         
             // inicializa a variável de soma
             sum = 0;
             
             // loop sobre os coeficientes das equações
-            for j = 1:n
+            for j = 1 : n
                 // ignora o coeficiente da diagonal 
                 if i ~= j 
                     sum = sum + A(i,j) * x(j);
@@ -113,31 +112,30 @@ A = [
     4 -2 1; 
     1 3 -1; 
     1 2 4
-    ];
-    
+];
+
 b = [
     3; 
     5; 
     6
-    ];
+];
 
-// Definir a estimativa inicial e a tolerância
 x0 = [
-    0; 
-    0; 
-    0
-    ];
+     0;
+     0;
+     0
+];
     
 tol = 0.3;
 
 // Definir o número máximo de iterações
-maxIter = 50;
+maxIter = 90;
 
 disp("Matriz aumentada: ");
 disp([A, b]);
 
 // Resolver o sistema utilizando o métod0 de Gauss-Seidel
-[x, iter] = gaussSeidel(A, b, tol, maxIter);
+[x, iter] = gaussSeidel(A, b, x0, tol, maxIter);
 
 // Exibir a solução e o número de iterações realizadas
 disp("Solução. x = ");

@@ -7,7 +7,11 @@ Embora o met. de Jacobi seja um algoritmo relativamente simples e fácil de impl
 clc
 
 // Implementação do metod0 de Jacobi
-
+// A é a matriz dos coeficientes do sistema de equações lineares
+// b é o vetor das constantes do sistema de equações lineares
+// x0 é o vetor inicial de estimativas de solução
+// tol é a tolerância para convergência
+// maxiter é o número máximo de iterações
 function [x] = jac(A, b, x0, tol, maxIter);
     //inicialização    
     // Número de linhas
@@ -58,7 +62,11 @@ b = [
 ];
 
 // Aproximação inciial
-x0 = [0; 0; 0];
+x0 = [
+     0; 
+     0; 
+     0
+ ];
 x
 // Definição da tolerância e do número máximo de iterações
 tol = 0.3;
