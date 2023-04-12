@@ -61,50 +61,6 @@ function [x, iter] = gaussSeidel(A, b, x0, tol, maxIter)
         // incrementa o número de iterações
         iter = iter + 1;
     end
-    
-    /*
-    // Obter as dimensões da matriz A
-    n = size(A, 1);
-
-    // Inicializar x
-    x = zeros(n, 1);
-
-    // Inicializar o contador de iterações
-    iter = 1;
-
-    // Realizar iterações até atingir a tolerância ou o número máximo de iterações
-    while iter < maxIter
-        // Realizar uma iteração
-        for i = 1:n
-            // Inicializar a soma
-            soma = 0;
-
-            // Somar os elementos da linha i, exceto o elemento diagonal
-            for j = 1:n
-                if j ~= i
-                    soma = soma + A(i, j) * x(j);
-                end
-            end
-
-            // Atualizar o valor da incógnita i
-            x(i) = (b(i) - soma) / A(i, i);
-            
-            
-        end
-        
-        err = norm(A * x - b);
-       
-        disp(string(err) + " < " + string(tol));
-        
-        // Verificar se a tolerância foi atingida
-        if err < tol
-            disp("Convergência alcançada após " + string(i) + " iterações.")
-            break;
-        end
-
-        // Incrementar o contador de iterações
-        iter = iter + 1;
-    end*/
 endfunction
 
 // Definir a matriz A e o vetor b
@@ -120,6 +76,7 @@ b = [
     6
 ];
 
+// CUIDADO!!: É de acordo com o tamanho dos vetores independentes
 x0 = [
      0;
      0;
