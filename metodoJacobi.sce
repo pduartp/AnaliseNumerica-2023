@@ -12,17 +12,16 @@ function [x] = jac(A, b, x0, tol, maxIter);
     //inicialização    
     // Número de linhas
     n = size(A, 1);
-    x = zeros(n, 1);
+    x = x0;
     
     // k = número de etapas
     // Implementação do métod0 de Jacobi
     for k = 1:max_iter
-        x_old = x;
         for i = 1:size(A, 1)
             sum = 0;
             for j = 1:size(A, 2)
                 if j ~= i
-                    sum = sum + A(i, j)*x_old(j);
+                    sum = sum + A(i, j) * x0(j);
                 end
             end
             x(i) = (b(i) - sum)/A(i, i);
@@ -32,13 +31,16 @@ function [x] = jac(A, b, x0, tol, maxIter);
         printf("\n");
         
         // Cálculo do erro relativo
-        err = norm(x - x_old)/norm(x);
+        err = norm(x - x0) / norm(x);
         
         // Verificação da convergência
+        disp(string(err) + " < " + string(tol));
         if err < tol
             disp("Convergência alcançada após " + string(k) + " iterações.")
             break;
         end
+                
+        x0 = x;
     end
 endfunction
 
@@ -63,6 +65,9 @@ tol = 0.3;
 
 // Número máximo de interações
 max_iter = 90;
+
+disp("Matriz aumentada: ");
+disp([A, b]);
 
 [x] = jac(A, b, x0, tol, max_iter);
 
