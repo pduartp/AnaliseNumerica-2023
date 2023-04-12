@@ -1,4 +1,4 @@
-/* O met. de Jacobi é um algoritmo numérico iterativo usado para encontrar soluções para sistemas de equações lineares. Especificamente, o met. de Jacobi é usado para resolver sistemas de equações lineares diagonais dominantes, que são sistemas em que a magnitude do elemento diagonal de cada equação é maior do que a soma das magnitudes dos outros elementos da equação.
+/* O met. de Jacobi é um algoritmo numérico ITERATIVO usado para encontrar soluções para sistemas de equações lineares. Especificamente, o met. de Jacobi é usado para resolver sistemas de equações lineares diagonais dominantes, que são sistemas em que a magnitude do elemento diagonal de cada equação é maior do que a soma das magnitudes dos outros elementos da equação.
 
 Ele funciona dividindo o sistema de equações em uma matriz diagonal e duas matrizes triangulares, uma matriz triangular superior e outra matriz triangular inferior. Em seguida, uma solução aproximada é inicializada, e a cada iteração, a solução é atualizada usando uma combinação dos valores anteriores e os valores da matriz de entrada. Essas iterações continuam até que a solução convirja para um valor satisfatório.
 
@@ -8,50 +8,64 @@ clc
 
 // Implementação do metod0 de Jacobi
 
-function [x] = jac(A, b, tol, max_iter);
-// Inicialização da solução aproximada
-x = zeros(size(A, 1), 1);
-
-for k = 1:max_iter
-    x_old = x;
-    for i = 1:size(A, 1)
-        sum = 0;
-        for j = 1:size(A, 2)
-            if j ~= i
-                sum = sum + A(i, j)*x_old(j);
+function [x] = jac(A, b, x0, tol, maxIter);
+    //inicialização    
+    // Número de linhas
+    n = size(A, 1);
+    x = zeros(n, 1);
+    
+    // k = número de etapas
+    // Implementação do métod0 de Jacobi
+    for k = 1:max_iter
+        x_old = x;
+        for i = 1:size(A, 1)
+            sum = 0;
+            for j = 1:size(A, 2)
+                if j ~= i
+                    sum = sum + A(i, j)*x_old(j);
+                end
             end
+            x(i) = (b(i) - sum)/A(i, i);
+            
+            printf("\n dada a interação %d temos o x(%d)=%g",k,i,x(i));
         end
-        x(i) = (b(i) - sum)/A(i, i);
+        printf("\n");
+        
+        // Cálculo do erro relativo
+        err = norm(x - x_old)/norm(x);
+        
+        // Verificação da convergência
+        if err < tol
+            disp("Convergência alcançada após " + string(k) + " iterações.")
+            break;
+        end
     end
-    // Cálculo do erro relativo
-    err = norm(x - x_old)/norm(x);
-    // Verificação da convergência
-    if err < tol
-        disp("Convergência alcançada após " + string(k) + " iterações.")
-        break;
-    end
-end
 endfunction
 
 // Definição do sistema de equações lineares
 A = [
-    4 -1 0; 
-    -1 4 -1; 
-    0 -1 4
+    4 -2 1; 
+    1 3 -1; 
+    1 2 4
 ];
 
 b = [
-    15; 
-    10; 
-    10
+    3; 
+    5; 
+    6
 ];
 
+// Aproximação inciial
+x0 = [0; 0; 0];
+x
 // Definição da tolerância e do número máximo de iterações
-tol = 1e-6;
-max_iter = 100;
+tol = 0.3;
 
-[x] = jac(A, b, tol, max_iter);
+// Número máximo de interações
+max_iter = 90;
+
+[x] = jac(A, b, x0, tol, max_iter);
 
 // Exibição da solução
-disp("Solução: ")
-disp(x)
+disp("Solução: ");
+disp(x);
