@@ -1,0 +1,30 @@
+clc
+
+// Definindo a função e a jacobiana
+function [f, Jf] = funcao(x, y)
+    f = [y - x^2; y - cos(x)];
+    Jf = [-2*x, 1; cos(x), 1];
+endfunction
+
+// Definindo a função do método de Newton
+function [x, y] = newton(x0, y0, tol)
+    iter = 0;
+    [f, Jf] = funcao(x0, y0);
+    while norm(f, 1) > tol && iter < 100
+        dx = Jf \ (-f);
+        x = x0 + dx(1);
+        y = y0 + dx(2);
+        [f, Jf] = funcao(x, y);
+        x0 = x;
+        y0 = y;
+        iter = iter + 1;
+    end
+endfunction
+
+// Chamando o método de Newton para as duas interseções
+[x1, y1] = newton(0.5, 0.5, 1e-8);
+[x2, y2] = newton(-0.5, 0.5, 1e-8);
+
+// Mostrando os resultados
+disp("Os pontos de interseção são:");
+disp(["(" + string(x1) + ", " + string(y1) + ")"; "(" + string(x2) + ", " + string(y2) + ")"]);

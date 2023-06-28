@@ -1,0 +1,71 @@
+clc
+
+/* 
+As funções fun e jac são definidas para calcular o vetor das três equações não-lineares
+e a matriz jacobiana, respectivamente. O loop for é usado para iterar o processo do métod 
+de Newton-Raphson 10 vezes. Dentro do loop, a atualização das variáveis é calculada pela 
+solução do sistema linear - j\f, onde j é a matriz jacobiana e f é o vetor das equações 
+não-lineares.
+*/
+
+// Calcula o vetor das três equações não-lineares
+function [f] = fun(x)
+    f(1) = 2*x(1) - x(2) - cos(x(1));
+    f(2) = -x(1) + 2*x(2) - x(3) - cos(x(2));
+    f(3) = -x(2) + x(3) - cos(x(3));
+endfunction
+
+// Calcula a matriz jacobiana das três equações
+function [j] = jac(x)
+    j(1,1) = 2 + sin(x(1));
+    j(1,2) = -1;
+    j(1,3) = 0;
+    j(2,1) = -1;
+    j(2,2) = 2 + sin(x(2));
+    j(2,3) = -1;
+    j(3,1) = 0;
+    j(3,2) = -1;
+    j(3,3) = 1 + sin(x(3));
+endfunction
+
+// Calcula a atualização das variáveis pelo métod de Newton-Raphson
+function [x] = newtonRaphson(x0, n)
+    x = x0
+    k = 1;
+    
+    while(k <= n)
+        f = fun(x);
+        j = jac(x);
+        
+        dx = - j \ f;
+        x = x + dx;
+        
+        k = k + 1;
+    end
+endfunction
+
+// Aproximações iniciais
+x01 = [ 1; 1; 1];
+x02 = [-0.5; -2; -3];
+x03 = [-2; -3; -4];
+x04 = [0; 0; 0];
+
+n = 10;
+
+// Imprimindo resultados
+
+x1 = newtonRaphson(x01, n);
+disp("x1 = ");
+disp(x1);
+
+x2 = newtonRaphson(x02, n);
+disp("x2 = ");
+disp(x2);
+
+x3 = newtonRaphson(x03, n);
+disp("x3 = ");
+disp(x3);
+
+x4 = newtonRaphson(x04, n);
+disp("x4 = ");
+disp(x4);

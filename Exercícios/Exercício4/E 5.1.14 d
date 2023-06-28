@@ -1,0 +1,36 @@
+clc
+
+// Definição da função e sua derivada
+function [f, df] = fun(x, y)
+    f = -x^4 - y^6 + 3*x*y^3 - x;
+    df = [-4*x^3 + 3*y^3 - 1; -6*y^5 + 9*x*y^2];
+endfunction
+
+// Definição do ponto de partida
+x0 = -1.5;
+y0 = -1.5;
+
+// Definição do critério de parada
+max_iter = 1000;
+tol = 1e-6;
+
+// Iteração do método de Newton
+for i = 1:max_iter
+    [f_val, df_val] = fun(x0, y0);
+    dx = -df_val(1)/df_val(2);
+    dy = -f_val/df_val(2);
+    x1 = x0 + dx;
+    y1 = y0 + dy;
+    if norm([dx; dy]) < tol
+        break;
+    end
+    x0 = x1;
+    y0 = y1;
+end
+
+// Resultado
+if i == max_iter
+    disp("Não foi possível convergir.");
+else
+    disp(["Máximo encontrado em (", x1, ", ", y1, ") com valor de ", -f_val]);
+end

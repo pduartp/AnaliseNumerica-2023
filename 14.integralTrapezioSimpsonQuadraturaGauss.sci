@@ -1,0 +1,234 @@
+// Patrick Duarte Pimenta
+
+clc
+
+/*
+Método do Trapézio:
+O método do trapézio é uma técnica de integração numérica que aproxima
+ a área sob uma curva dividindo o intervalo em trapézios e calculando 
+ a soma das áreas desses trapézios. Ele utiliza uma interpolação linear
+ entre os pontos da função nos intervalos.
+Vantagens:
+
+É fácil de implementar.
+Funciona bem para funções que são aproximadamente lineares entre os pontos avaliados.
+É mais preciso do que a regra do ponto médio.
+
+Desvantagens:
+
+Pode ser menos preciso para funções que possuem curvaturas acentuadas.
+A convergência pode ser lenta para atingir a precisão desejada.
+
+Método de Simpson:
+O método de Simpson é uma técnica de integração numérica que aproxima 
+a área sob uma curva utilizando polinômios de segundo grau para 
+conectar os pontos da função nos intervalos. Ele divide o intervalo 
+em subintervalos e aplica uma fórmula específica para cada subintervalo.
+
+Vantagens:
+
+Fornece uma aproximação mais precisa em comparação com o método do trapézio.
+Funciona bem para funções suaves ou com curvas suaves.
+
+Desvantagens:
+
+Pode ser mais complicado de implementar do que o método do trapézio.
+Requer um número par de subintervalos para funcionar corretamente.
+Ainda pode ter problemas de precisão para funções com curvas acentuadas.
+
+Método de Quadratura de Gauss-Legendre:
+O método de quadratura de Gauss-Legendre é uma técnica de integração 
+numérica que utiliza pontos e pesos pré-determinados para realizar a 
+integração. Ele busca aproximar a função por meio de polinômios e 
+calcula a integral usando uma combinação ponderada desses pontos e pesos.
+
+Vantagens:
+
+Oferece alta precisão para uma ampla gama de funções.
+É eficiente em termos de convergência e pode alcançar resultados 
+precisos com um número relativamente pequeno de pontos de integração.
+Funciona bem para funções com curvas acentuadas ou descontínuas.
+
+Desvantagens:
+
+Pode ser mais complexo de implementar.
+A escolha inadequada do número de pontos de integração ou dos 
+limites de integração pode levar a resultados imprecisos.
+O número de pontos de integração aumenta rapidamente à medida que 
+a precisão desejada aumenta, o que pode levar a um aumento no tempo de cálculo.
+
+Em resumo, o método do trapézio é simples e adequado para funções 
+lineares ou aproximadamente lineares, o método de Simpson é mais 
+preciso para funções suaves e o método de quadratura de Gauss-Legendre
+ é altamente preciso e adequado para funções com curvas acentuadas. A
+  escolha do método depende da natureza da função a ser integrada e do
+   nível de precisão desejado.
+*/
+
+/*
+Objetivo deste programa:
+O usuário fornece uma função e ele escolhe qual método de integração numérica para calcular
+a entrada fornecida por ele.
+*/
+
+/* Obtem a entrada do usuário
+    - funcao: Funcao escolhida pelo usuário;
+    - limiteAinf, limiteBsup: Limites inferiores e superiores a e b;
+    - numSegmentos: quantidade de segmentos;
+    - opcaoMetodo: método de integração escolhido
+*/
+function [f, limiteAinf, limiteBsup, numSegmentos, opcaoMetodo] = obterEntradaUsuario()
+    disp("___ CALCULO NUMÉRICO COM INTEGRAÇÃO ___");
+    
+    // ATENÇÃO: FICAR ATENTO COM "." ENTRE "*" E "^"
+    // EX: ((x.^3) .* sin(x)) ./ (1 + x)
+    // 0.2 + 25.*x - 200.*x.^2 + 675.*x.^3 - 900.*x.^4 + 400.*x.^5 entre 0 0.8
+    // 1 - %e.^(-2.*x) entre 0 e 3
+    // 5 + 3.*cos(x) entre 0 e 3
+    // x.^(0.1) .* (1.2 - x) .* (1 - %e.^(20 .* (x - 1))) entre 0 e 1
+    funcaoFornecida = input("Digite a função em forma de string (por exemplo, no formato y = f(x)): ", "s");
+    funcaoFornecida = "y = " + funcaoFornecida;
+    deff("y = f(x)", funcaoFornecida);
+    funcprot(0);
+    
+    disp("Digite os limites inferiores e superiores:");
+    limiteAinf = input("Limite inferior a = ");
+    limiteBsup = input("Limite superior b = ");
+    
+    numSegmentos = input("Digite o número de segmentos: ");
+    
+    opcaoMetodo = input("Digite (1) para escolher o método de trapézios (2) para o método de Simpson ou (3) para o método de quadratura de gauss:");
+    
+    
+    if opcaoMetodo == 1 then
+        opcaoMetodo = "Método de trapézios"
+    elseif opcaoMetodo == 2 then
+        opcaoMetodo = "Método de Simpson";
+    elseif opcaoMetodo == 3 then
+        opcaoMetodo = "Método de Quadratura de Gauss";
+    elseif opcaoMetodo == 4 then
+        opcaoMetodo = "(SECRETO), TODOS";
+    else
+        disp("ERRO: ENTRADA INVÁLIDA!");
+        return;
+    end
+        
+    disp("- FUNÇÃO ESCOLHIDA: " + string(funcaoFornecida));
+    disp("- LIMITE INFERIOR ESCOLHIDO a = " + string(limiteAinf));
+    disp("- LIMITE SUPERIOR ESCOLHIDO b = " + string(limiteBsup));
+    disp("- NÚMERO DE SEGMENTOS ESCOLHIDO: " + string(numSegmentos))
+    disp("- MÉTODO DE INTEGRAÇÃO ESCOLHIDO: " + string(opcaoMetodo));
+endfunction
+
+// Função para calcular a integral usando o método do trapézio
+/*
+A função metodoIntegralTrapezio calcula a integral de uma função usando o método 
+do trapézio. Recebe como entrada a função f a ser integrada, os limites de integração 
+a e b, e o número de subintervalos n. O método divide o intervalo [a, b] em n 
+subintervalos de tamanho igual, calcula os valores da função nos pontos dos 
+subintervalos, e usa a fórmula do trapézio para calcular a integral aproximada. 
+O resultado é retornado como saída da função.
+*/
+function resultado = metodoIntegralTrapezio(f, a, b, n)
+    // tamanho do intervalo
+    h = (b - a) / n; 
+    
+    // pontos do intervalo
+    x = a:h:b;
+    
+    // valores da função nos pontos do intervalo 
+    y = f(x); 
+    
+    // cálculo da integral
+    resultado = (h/2) * (y(1) + 2 * sum(y(2:n)) + y(n+1)); 
+endfunction
+
+// Função para calcular a integral usando o método de Simpson
+/*
+A função metodoIntegralSimpson calcula a integral de uma função usando o método
+ de Simpson. Recebe como entrada a função f a ser integrada, os limites de 
+ integração a e b, e o número de subintervalos n. O método divide o intervalo 
+ [a, b] em n subintervalos de tamanho igual, calcula os valores da função nos 
+ pontos dos subintervalos, e usa a fórmula de Simpson para calcular a integral 
+ aproximada. O resultado é retornado como saída da função.
+*/
+function resultado = metodoIntegralSimpson(f, a, b, n)
+    // tamanho do intervalo
+    h = (b - a) / n; 
+    
+    // pontos do intervalo
+    x = a:h:b;
+    
+    // valores da função nos pontos do intervalo 
+    y = f(x); 
+    
+    // cálculo da integral
+    resultado = (h/3) * (y(1) + 4 * sum(y(2:2:n)) + 2 * sum(y(3:2:n-1)) + y(n+1)); 
+endfunction
+
+// Função para calcular a integral usando o método quadratura de Gauss
+/*
+A função metodoQuadraturaGaussLegendre calcula a integral de uma função usando 
+o método de quadratura de Gauss-Legendre. Recebe como entrada a função f a ser 
+integrada, os limites de integração a e b, e o número de pontos de integração n.
+ O método divide o intervalo [a, b] em n subintervalos de tamanho igual, calcula
+  os pesos e os pontos de integração pré-determinados para o número de pontos 
+  desejado, e realiza a integração numérica aproximada utilizando esses pontos 
+  e pesos. O resultado é retornado como saída da função.
+*/
+function resultado = metodoQuadraturaGaussLegendre(f, a, b, n)
+    // Para 3 nos - Ex: x = [0: %pi/2 :%pi] = 3 pontos
+    //a,b = Limites Integracao
+    // N = num de intervalos
+    //fun = funcao
+    
+    h = (b-a) / n;
+    x = linspace(a, b, n + 1);
+    
+    w1 = 5/9; t1 = -sqrt(3/5);
+    w2 = 8/9; t2 = 0;
+    w3 = w1;    t3 = -t1;
+    
+    resultado = 0;
+    
+    for i = 1 : n
+        alpha = (x(i+1) -x(i))/2
+        bet = (x(i+1) +x(i))/2
+        x1 = alpha*t1+bet;
+        x2 = alpha*t2+bet;
+        x3 = alpha*t3+bet;
+        
+        A = (w1*f(x1) + w2*f(x2) + w3*f(x3)) * h/2
+        resultado = resultado + A
+    end
+    
+endfunction
+
+[f, limiteAinf, limiteBsup, numSegmentos, opcaoMetodo] = obterEntradaUsuario();
+
+select opcaoMetodo
+case "Método de trapézios" then
+    resultado = metodoIntegralTrapezio(f, limiteAinf, limiteBsup, numSegmentos);
+case "Método de Simpson" then
+    resultado = metodoIntegralSimpson(f, limiteAinf, limiteBsup, numSegmentos);
+case "Método de Quadratura de Gauss" then
+    resultado = metodoQuadraturaGaussLegendre(f, limiteAinf, limiteBsup, numSegmentos);
+case "(SECRETO), TODOS" then
+    opcaoMetodo = "Método de trapézios";
+    resultado = metodoIntegralTrapezio(f, limiteAinf, limiteBsup, numSegmentos);
+    disp("Resultado usando o " + string(opcaoMetodo) + ": " + string(resultado));
+    
+    opcaoMetodo = "Método de Simpson";
+    resultado = metodoIntegralSimpson(f, limiteAinf, limiteBsup, numSegmentos);
+    disp("Resultado usando o " + string(opcaoMetodo) + ": " + string(resultado));
+    
+    opcaoMetodo = "Método de Quadratura de Gauss";
+    resultado = metodoQuadraturaGaussLegendre(f, limiteAinf, limiteBsup, numSegmentos);
+    disp("Resultado usando o " + string(opcaoMetodo) + ": " + string(resultado));
+    
+    disp("ENCERRANDO O PROGRAMA");
+    
+    return;
+end
+
+disp("Resultado usando o " + string(opcaoMetodo) + ": " + string(resultado));

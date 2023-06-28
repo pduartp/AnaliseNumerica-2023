@@ -1,0 +1,39 @@
+// Harmônico
+
+clc
+
+// Ajuste Trigonometrico : Metodo dos minimos quadrados
+// G(x) =  Ae^b(x)
+
+// Entradas
+x = [1 : 4];
+y = [3 5 7 6];
+
+
+// Criantdo a matriz Z
+z1 = [ones(x); cos(x); sin(x)];
+a1 = (z1 * z1') \ (z1 * y');
+
+// Obtendo a função aproximadora
+
+// Novo dominio para o gráfico
+xx = [0 : 0.1 : 2 * %pi];
+
+g1 = a1(1) + a1(2) * cos(xx) + a1(3) * sin(xx);
+
+// Gráficos
+plot(x, y, 'ro');
+plot(xx, g1, 'b-');
+legend(['Pontos Experimentais' ; 'G(x)'], 5);
+
+
+disp(y);
+disp(z1);
+disp(a1);
+
+// Erro
+sr1 = sum((y - z1 * a1).^2);
+//st1 = sum((y - mean(y)).^2);
+//R21 = 1 - sr1 / st1;
+
+//disp(R21);
